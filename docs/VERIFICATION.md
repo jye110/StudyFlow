@@ -253,3 +253,7 @@ Do not record invented participants, reviewer approval, Safari/WebKit equivalenc
 - MySQL regeneration required fresh reads after the owner lock. READ COMMITTED is configured to avoid stale transaction snapshots; its actual MySQL execution remains a CI/deployment check.
 
 These corrections are development observations, not a substitute for the QA plan's independent defect closure process.
+
+## Running performance and restart verification
+
+`python tools/system_verify.py` starts and stops its own isolated SQLite-backed server. It checks a real process restart with 20 assignments, five HTTP scheduler runs at 1/50/200 assignments, and a 10-user workload with 60 seconds of warm-up followed by 300 measured seconds. It writes raw measurements to `docs/evidence/system-results.json`.

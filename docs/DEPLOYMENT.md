@@ -12,6 +12,8 @@ Start Docker Desktop. Copy `.env.example` to `.env` and replace both MySQL passw
 docker compose up --build
 ```
 
+Stop any local server already using port 5000 before starting Compose. Database data persists in a named volume; retain the volume to keep that data.
+
 MySQL is internal to the Compose network; only the application binds `127.0.0.1:5000`. The application applies the initial Alembic migration before serving. To seed a demonstration account:
 
 ```powershell
