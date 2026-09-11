@@ -5,6 +5,8 @@ test("time calendar adds events from slots, edits repeats and keeps axis visible
 }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.goto("/");
+  // Finish browser session bootstrap before issuing API authentication requests.
+  await page.getByLabel("Email address", { exact: true }).waitFor();
   const anonymous = await (await page.request.get("/api/auth/csrf")).json();
   const response = await page.request.post("/api/auth/register", {
     headers: { "X-CSRF-Token": anonymous.csrf_token },

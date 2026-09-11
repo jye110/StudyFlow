@@ -5,6 +5,8 @@ test.use({ baseURL: "http://127.0.0.1:5001", timezoneId: "UTC" });
 test("study history switches daily and weekly totals and reflects check-in corrections", async ({ page }, testInfo) => {
   await page.clock.install({ time: new Date("2026-09-10T09:00:00Z") });
   await page.goto("/");
+  // Finish browser session bootstrap before issuing API authentication requests.
+  await page.getByLabel("Email address", { exact: true }).waitFor();
   const csrf = (await (await page.request.get("/api/auth/csrf")).json()).csrf_token;
   const login = await page.request.post("/api/auth/login", {
     headers: { "X-CSRF-Token": csrf }, data: { email: `${testInfo.project.name}-history@example.test`, password: "correct password 123" },

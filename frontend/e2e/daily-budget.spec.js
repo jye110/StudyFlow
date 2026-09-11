@@ -5,6 +5,8 @@ test.use({ baseURL: "http://127.0.0.1:5001", timezoneId: "UTC" });
 test("daily study budget skips busy hours and filling preserves the daily limit", async ({ page }, testInfo) => {
   await page.clock.install({ time: new Date("2026-09-10T09:00:00Z") });
   await page.goto("/");
+  // Finish browser session bootstrap before issuing API authentication requests.
+  await page.getByLabel("Email address", { exact: true }).waitFor();
   const anonymous = (await (await page.request.get("/api/auth/csrf")).json()).csrf_token;
   const registered = await page.request.post("/api/auth/register", {
     headers: { "X-CSRF-Token": anonymous },

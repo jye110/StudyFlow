@@ -4,6 +4,8 @@ test.use({ baseURL: "http://127.0.0.1:5001" });
 
 test("AI requires Notes and supports clarification, editing and explicit acceptance", async ({ page }, testInfo) => {
   await page.goto("/");
+  // Finish browser session bootstrap before issuing API authentication requests.
+  await page.getByLabel("Email address", { exact: true }).waitFor();
   const csrf = (await (await page.request.get("/api/auth/csrf")).json()).csrf_token;
   const login = await page.request.post("/api/auth/login", {
     headers: { "X-CSRF-Token": csrf },

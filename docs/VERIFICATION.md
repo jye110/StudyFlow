@@ -1,5 +1,11 @@
 # Verification record
 
+## CI browser test initialization and current planning rules
+
+After the interpreter fix, GitHub Actions run 34557251141 passed the backend/MySQL job and 29 of 38 browser cases. Five authentication failures came from test API requests racing the page's initial CSRF/session bootstrap. API-authenticated browser tests now wait for the sign-in form before fetching their token. Both Chrome and Edge exposed outdated planning fixtures: the Busy time exclusion test now blocks the entire 09:00-22:00 study window, and the session compensation fixture explicitly includes end_hour. Application authentication and scheduling behavior are unchanged.
+
+Local validation used isolated databases: the full Chrome/Edge suite passed 34 cases and found four additional time-dependent failures in two older workflows, where the evening cutoff correctly shortened sessions. Those fixtures now start tomorrow to preserve their exact chunk assertions; all four affected cases passed on rerun. ESLint and git diff whitespace checks passed. The complete Linux suite is rerun by GitHub Actions after push.
+
 ## CI fixture Python discovery
 
 The first GitHub Actions run passed the backend/MySQL job but stopped before browser tests with `../.venv/bin/python: not found` (exit 127). The runner installs Python and dependencies globally; the fixture command had assumed a local virtual environment. Playwright now checks for the platform's local `.venv` interpreter and otherwise uses `python` from PATH. Local ESLint and the Chrome apply-settings browser test passed after the change; GitHub Actions validates the Linux fallback.

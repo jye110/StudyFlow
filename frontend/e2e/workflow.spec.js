@@ -128,6 +128,9 @@ test("62-minute assignment shows a planning prompt until generation, with real f
       data: {
         course_id: course.id,
         title: "A 62-minute assignment",
+        // Use a full future day so the evening cutoff cannot split the expected chunks.
+        start_mode: "custom",
+        start_at: new Date(new Date().setHours(24, 0, 0, 0)).toISOString(),
         due_at: new Date(Date.now() + 14 * 86400000).toISOString(),
         estimated_minutes: 62,
         priority: "High",
@@ -270,6 +273,13 @@ test("student acceptance flow, errors, AI outage, completion, deletion and sign-
     .toISOString()
     .slice(0, 16);
   await page.getByLabel("Due date and time").fill(local);
+  // Keep this flow independent of how much study time is left tonight.
+  await page.getByLabel("Earliest start", { exact: true }).selectOption("custom");
+  const tomorrow = new Date(new Date().setHours(24, 0, 0, 0));
+  await page.getByLabel("Start date", { exact: true }).fill(
+    new Date(tomorrow.getTime() - tomorrow.getTimezoneOffset() * 60000)
+      .toISOString().slice(0, 10),
+  );
   await page
     .getByLabel("Notes (optional)")
     .fill("Keep this note after saving.");

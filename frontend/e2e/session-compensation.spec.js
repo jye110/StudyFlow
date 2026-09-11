@@ -4,6 +4,8 @@ test("calendar event deletion and study resize/delete automatically compensate l
   page,
 }) => {
   await page.goto("/");
+  // Finish browser session bootstrap before issuing API authentication requests.
+  await page.getByLabel("Email address", { exact: true }).waitFor();
   const anonymous = await (await page.request.get("/api/auth/csrf")).json();
   const registration = await page.request.post("/api/auth/register", {
     headers: { "X-CSRF-Token": anonymous.csrf_token },
@@ -42,6 +44,7 @@ test("calendar event deletion and study resize/delete automatically compensate l
   const settings = {
     timezone: zone,
     start_hour: 9,
+    end_hour: 22,
     daily_minutes: 180,
     horizon_days: 30,
   };

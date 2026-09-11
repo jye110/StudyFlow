@@ -7,6 +7,8 @@ test("calendar and planning actions fit the viewport despite long history and bu
 }, testInfo) => {
   await page.clock.install({ time: new Date("2026-09-10T09:00:00Z") });
   await page.goto("/");
+  // Finish browser session bootstrap before issuing API authentication requests.
+  await page.getByLabel("Email address", { exact: true }).waitFor();
   const csrf = (await (await page.request.get("/api/auth/csrf")).json())
     .csrf_token;
   const login = await page.request.post("/api/auth/login", {

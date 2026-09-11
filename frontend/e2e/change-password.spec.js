@@ -7,6 +7,8 @@ test("change password validates inputs, keeps this device signed in and revokes 
   const oldPassword = "original password 123";
   const newPassword = "replacement password 456";
   await page.goto("/");
+  // Finish browser session bootstrap before issuing API authentication requests.
+  await page.getByLabel("Email address", { exact: true }).waitFor();
   const csrf = (await (await page.request.get("/api/auth/csrf")).json()).csrf_token;
   expect((await page.request.post("/api/auth/register", {
     headers: { "X-CSRF-Token": csrf }, data: { name: "Password Student", email, password: oldPassword },

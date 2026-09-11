@@ -2,6 +2,8 @@ import { test, expect } from "@playwright/test";
 
 test("reduce assignment estimate then fill extra work without replacing existing sessions", async ({ page }) => {
   await page.goto("/");
+  // Finish browser session bootstrap before issuing API authentication requests.
+  await page.getByLabel("Email address", { exact: true }).waitFor();
   const anonymous = await (await page.request.get("/api/auth/csrf")).json();
   const registration = await page.request.post("/api/auth/register", {
     headers: { "X-CSRF-Token": anonymous.csrf_token },

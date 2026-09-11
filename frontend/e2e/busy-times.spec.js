@@ -6,6 +6,8 @@ test("busy time CRUD, conflict repair, repeating exclusions and mobile form", as
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
+  // Finish browser session bootstrap before issuing API authentication requests.
+  await page.getByLabel("Email address", { exact: true }).waitFor();
   const anonymous = await (await page.request.get("/api/auth/csrf")).json();
   const registration = await page.request.post("/api/auth/register", {
     headers: { "X-CSRF-Token": anonymous.csrf_token },
@@ -57,6 +59,7 @@ test("busy time CRUD, conflict repair, repeating exclusions and mobile form", as
         data: {
           timezone: zone,
           start_hour: 9,
+          end_hour: 22,
           daily_minutes: 180,
           horizon_days: 30,
         },
@@ -130,7 +133,8 @@ test("busy time CRUD, conflict repair, repeating exclusions and mobile form", as
   await page.getByLabel("Saturday", { exact: true }).check();
   await page.getByLabel("Sunday", { exact: true }).check();
   await page.getByLabel("Busy start time", { exact: true }).fill("09:00");
-  await page.getByLabel("Busy end time", { exact: true }).fill("12:00");
+  // Block the entire study window; daily_minutes is a quota, not its length.
+  await page.getByLabel("Busy end time", { exact: true }).fill("22:00");
   await page.setViewportSize({ width: 390, height: 844 });
   await page.screenshot({
     path: `../tmp/busy-form-${testInfo.project.name}.png`,
