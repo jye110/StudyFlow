@@ -1,0 +1,12 @@
+{
+  "date": "2026-09-10",
+  "scope": "Replace Now with a one-hour buffer for new allocations",
+  "backend_initial": {"command": "python -m pytest -q", "passed": 184, "failed": 2, "reason": "Two fixture assumptions corrected: past DST date and missing custom date validation."},
+  "backend_recheck": {"command": "python -m pytest -q tests/test_scheduler.py tests/test_start_preferences.py tests/test_daily_budget.py tests/test_one_hour_start.py", "passed": 43, "failed": 0},
+  "new_backend_cases": 8,
+  "browser": {"command": "npm.cmd run test:e2e -- --grep \"one hour later is the default\"", "passed": 2, "failed": 0, "browsers": ["Chrome", "Edge"]},
+  "checks": ["Production build", "ESLint", "Ruff"],
+  "stored_mode": "now",
+  "migration_required": false,
+  "existing_user_plans_regenerated": false
+}

@@ -1,0 +1,12 @@
+{
+  "feature": "Apply planning settings and request explicit regeneration on conflicts",
+  "backend_passed": 57,
+  "backend_command": "python -m pytest tests/test_plan_settings.py tests/test_auth_security.py tests/test_end_hour.py tests/test_daily_budget.py -q",
+  "browser_cases_passed": 6,
+  "browser_specs": ["apply-settings.spec.js", "end-hour.spec.js", "schedule-layout.spec.js"],
+  "browsers": ["chrome", "edge"],
+  "rerun": "Edge apply-settings case passed after narrowing an ambiguous status locator to the toast",
+  "checks": ["production frontend build", "ESLint", "affected Python Ruff", "mobile dialog inspection"],
+  "database": "isolated synthetic browser fixture",
+  "activation": "Restart local backend in terminal with configured API environment"
+}

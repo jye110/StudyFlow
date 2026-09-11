@@ -1,0 +1,9 @@
+{
+  "date": "2026-09-10",
+  "scope": "Daily study total instead of contiguous time window",
+  "backend": {"command": "python -m pytest -q", "passed": 178, "failed": 0, "new_cases": 11},
+  "browser": {"command": "npm.cmd run test:e2e -- --grep \"daily study budget\"", "passed": 2, "failed": 0, "browsers": ["Chrome", "Edge"], "database": "isolated synthetic fixture"},
+  "checks": ["Production build", "ESLint", "Ruff", "Busy gaps", "Daily preserved-study accounting", "Missed session exclusion", "Midnight and DST", "Earliest starts and deadlines", "Fill, repair and compensation"],
+  "migration_required": false,
+  "existing_user_plans_regenerated": false
+}

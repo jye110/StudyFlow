@@ -1,0 +1,16 @@
+{
+  "date": "2026-09-10",
+  "feature": "Per-assignment completed, unscheduled and awaiting-confirmation minutes",
+  "unit": { "command": "npm run test:study-totals", "passed": 3, "failed": 0 },
+  "browsers": {
+    "command": "npm run test:e2e -- --grep \"confirm historical study|responsive primary pages\"",
+    "projects": ["chrome", "edge"],
+    "passed": 4,
+    "failed": 0
+  },
+  "build": "passed",
+  "eslint": "passed",
+  "visual_review": "Desktop and 390-pixel mobile assignment lists inspected",
+  "backend": "Unchanged; not rerun for this frontend-only change",
+  "migration": "Not required"
+}

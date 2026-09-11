@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-09-10T21:43:24.943929+00:00",
+  "totals": {
+    "covered_lines": 581,
+    "num_statements": 615,
+    "percent_covered": 94.47154471544715,
+    "percent_covered_display": "94",
+    "missing_lines": 34,
+    "excluded_lines": 0,
+    "percent_statements_covered": 94.47154471544715,
+    "percent_statements_covered_display": "94"
+  },
+  "modules": {
+    "studyflow/__init__.py": {
+      "covered_lines": 80,
+      "num_statements": 93,
+      "percent_covered": 86.02150537634408,
+      "percent_covered_display": "86",
+      "missing_lines": 13,
+      "excluded_lines": 0,
+      "percent_statements_covered": 86.02150537634408,
+      "percent_statements_covered_display": "86"
+    },
+    "studyflow/ai.py": {
+      "covered_lines": 26,
+      "num_statements": 26,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "studyflow/api.py": {
+      "covered_lines": 201,
+      "num_statements": 203,
+      "percent_covered": 99.01477832512315,
+      "percent_covered_display": "99",
+      "missing_lines": 2,
+      "excluded_lines": 0,
+      "percent_statements_covered": 99.01477832512315,
+      "percent_statements_covered_display": "99"
+    },
+    "studyflow/auth.py": {
+      "covered_lines": 116,
+      "num_statements": 118,
+      "percent_covered": 98.30508474576271,
+      "percent_covered_display": "98",
+      "missing_lines": 2,
+      "excluded_lines": 0,
+      "percent_statements_covered": 98.30508474576271,
+      "percent_statements_covered_display": "98"
+    },
+    "studyflow/cli.py": {
+      "covered_lines": 11,
+      "num_statements": 27,
+      "percent_covered": 40.74074074074074,
+      "percent_covered_display": "41",
+      "missing_lines": 16,
+      "excluded_lines": 0,
+      "percent_statements_covered": 40.74074074074074,
+      "percent_statements_covered_display": "41"
+    },
+    "studyflow/models.py": {
+      "covered_lines": 43,
+      "num_statements": 43,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "studyflow/scheduler.py": {
+      "covered_lines": 40,
+      "num_statements": 40,
+      "percent_covered": 100.0,
+      "percent_covered_display": "100",
+      "missing_lines": 0,
+      "excluded_lines": 0,
+      "percent_statements_covered": 100.0,
+      "percent_statements_covered_display": "100"
+    },
+    "studyflow/validation.py": {
+      "covered_lines": 64,
+      "num_statements": 65,
+      "percent_covered": 98.46153846153847,
+      "percent_covered_display": "98",
+      "missing_lines": 1,
+      "excluded_lines": 0,
+      "percent_statements_covered": 98.46153846153847,
+      "percent_statements_covered_display": "98"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "feature": "Require assignment Notes and request missing requirements before AI breakdown",
+  "backend": { "command": "python -m pytest tests/test_ai.py tests/test_auth_security.py tests/test_api.py -q", "passed": 79 },
+  "browser": { "command": "npx playwright test e2e/ai-notes.spec.js", "passed": 2, "projects": ["chrome", "edge"], "database": "isolated synthetic fixture" },
+  "checks": ["production frontend build", "ESLint", "affected Python Ruff", "mobile clarification screenshot inspected"],
+  "provider": "Deterministic mocked responses; no live call made for this change",
+  "activation": "Restart backend from the terminal with OPENAI_API_KEY and OPENAI_MODEL set"
+}

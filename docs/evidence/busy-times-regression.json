@@ -1,0 +1,22 @@
+{
+  "date": "2026-09-10",
+  "feature": "Personal busy time and selective future conflict repair",
+  "backend": { "command": "python -m pytest -q", "passed": 113, "failed": 0, "new_busy_time_cases": 20 },
+  "browsers": {
+    "projects": ["chrome", "edge"],
+    "existing_workflow": { "command": "npm run test:e2e -- workflow.spec.js", "passed": 10, "failed": 0 },
+    "busy_times": { "command": "npm run test:e2e -- busy-times.spec.js", "passed": 2, "failed": 0 },
+    "mobile_form_width": 390,
+    "mobile_form_visually_inspected": true
+  },
+  "build": "passed",
+  "eslint": "passed",
+  "ruff": "passed",
+  "migration": {
+    "revision": "c3910e5624ab",
+    "database": "local SQLite",
+    "backup_created": true,
+    "original_rows_verified_unchanged": { "user": 33, "course": 28, "assignment": 33, "study_session": 35 }
+  },
+  "scope": "Local automated verification; MySQL deployment and independent human acceptance remain outstanding."
+}

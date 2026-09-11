@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-10",
+  "scope": "Adaptive 6h/12h/24h calendar views, default 12h from 08:00",
+  "unit": {"command": "npm.cmd run test:calendar", "passed": 8},
+  "browser_initial": {"command": "npm.cmd run test:e2e -- --grep \"calendar and planning actions|time calendar adds|reduce assignment estimate|responsive primary pages\"", "passed": 6, "failed": 2, "finding": "Starting scroll position drifted after viewport resizing."},
+  "browser_recheck": {"command": "npm.cmd run test:e2e -- --grep \"calendar and planning actions\"", "passed": 2, "failed": 0, "browsers": ["Chrome", "Edge"], "viewports": [[1366,768],[1280,720],[390,844],[360,640]], "visible_hours": [6,12,24]},
+  "checks": ["Hour geometry and midnight clipping", "Minimum event heights and collision lanes", "Viewport and toolbar bounds", "Visible-hour ratios", "Starting scroll position", "Correct clicked event start time", "Zoom retained after filling remaining work", "Desktop and mobile screenshot inspection", "ESLint", "Production build"],
+  "backend_changed": false,
+  "backend_tests_rerun": false
+}

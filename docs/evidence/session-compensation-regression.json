@@ -1,0 +1,11 @@
+{
+  "date": "2026-09-10",
+  "feature": "Personal event deletion and automatic downstream study compensation",
+  "backend": { "command": "python -m pytest -q", "passed": 136, "failed": 0 },
+  "browsers": { "command": "npm run test:e2e", "projects": ["chrome", "edge"], "passed": 16, "failed": 0 },
+  "build": "passed",
+  "eslint": "passed",
+  "ruff": "passed",
+  "migration": { "revision": "d5173a96bc02", "database": "local SQLite", "backup_created": true, "original_rows_verified_unchanged": true },
+  "scope": "Local automated verification; earlier deployment and human acceptance limitations still apply."
+}

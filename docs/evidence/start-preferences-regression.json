@@ -1,0 +1,11 @@
+{
+  "date": "2026-09-10",
+  "feature": "Assignment earliest start: now, one week before deadline, custom date",
+  "backend": { "command": "python -m pytest -q", "passed": 93, "failed": 0 },
+  "browsers": { "command": "npm run test:e2e", "projects": ["chrome", "edge"], "passed": 10, "failed": 0 },
+  "build": "passed",
+  "eslint": "passed",
+  "ruff": "passed",
+  "migration": { "revision": "b120a731e082", "database": "local SQLite", "backup_created": true, "existing_assignments_defaulted_to_now": 25 },
+  "scope": "Local automated verification; MySQL deployment and human acceptance remain outstanding."
+}

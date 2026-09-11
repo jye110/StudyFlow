@@ -1,0 +1,12 @@
+{
+  "date": "2026-09-10",
+  "feature": "Schedule incomplete overdue assignments before upcoming work",
+  "backend": { "command": "python -m pytest -q", "passed": 119, "failed": 0 },
+  "browsers": { "command": "npm run test:e2e", "projects": ["chrome", "edge"], "passed": 12, "failed": 0 },
+  "build": "passed",
+  "eslint": "passed",
+  "ruff": "passed",
+  "migration_required": false,
+  "coverage": ["overdue Low before upcoming High", "deterministic ordering", "partial capacity", "earliest start and busy time", "history credit", "exact deadline boundary", "manual edits", "conflict repair", "original due date and overdue label preserved"],
+  "scope": "Local automated verification; previously documented deployment and human acceptance work remains outstanding."
+}

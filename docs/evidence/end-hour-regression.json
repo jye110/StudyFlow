@@ -1,0 +1,9 @@
+{
+  "date": "2026-09-10",
+  "scope": "Configurable daily automatic planning end time, default 22:00",
+  "backend": {"command": "python -m pytest -q", "passed": 202, "failed": 0, "new_cases": 16},
+  "browser": {"command": "npm.cmd run test:e2e -- --grep \"planning end time persists|calendar and planning actions\"", "passed": 4, "failed": 0, "browsers": ["Chrome", "Edge"], "database": "isolated synthetic fixture"},
+  "checks": ["Production build", "ESLint", "Ruff", "Mobile visual inspection"],
+  "migration_required": false,
+  "existing_user_plans_regenerated": false
+}

@@ -1,0 +1,33 @@
+{
+  "name": "studyflow-client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "lint": "eslint .",
+    "test:e2e": "playwright test",
+    "test:study-totals": "node --test unit/assignment-study-totals.test.js",
+    "test:study-history": "node --test unit/study-history.test.js",
+    "test:calendar": "node --test unit/calendar-layout.test.js"
+  },
+  "dependencies": {
+    "lucide-react": "^1.44.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "eslint": "^10.10.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.6",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.6",
+    "vite": "^8.3.0"
+  }
+}

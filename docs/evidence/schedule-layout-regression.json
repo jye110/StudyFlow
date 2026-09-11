@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-10",
+  "feature": "Compact planning toolbar, viewport calendar and detail side panels",
+  "initial_browser_run": { "command": "npm run test:e2e", "passed": 20, "failed": 2, "failure": "Hidden mobile Schedule heading affected navigation identification" },
+  "targeted_recheck": {
+    "command": "npm run test:e2e -- --grep \"calendar and planning actions|responsive primary pages\"",
+    "projects": ["chrome", "edge"],
+    "passed": 4,
+    "failed": 0
+  },
+  "viewport_cases": ["1366x768", "1280x720", "390x844", "360x640"],
+  "stress_fixture": { "pending_sessions": 20, "busy_rules": 20 },
+  "visual_review": "Desktop and mobile calendar screenshots inspected",
+  "build": "passed",
+  "eslint": "passed",
+  "fixture_ruff": "passed",
+  "backend": "Unchanged; no migration needed"
+}

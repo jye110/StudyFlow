@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-10",
+  "feature": "Weekly time-grid calendar and click-to-add personal events",
+  "backend": { "command": "python -m pytest -q", "passed": 125, "failed": 0 },
+  "layout": { "command": "npm run test:calendar", "passed": 5, "failed": 0 },
+  "browsers": {
+    "projects": ["chrome", "edge"],
+    "existing_workflows_passed": 12,
+    "new_calendar_flows_passed": 2,
+    "final_targeted_recheck_passed": 4,
+    "desktop_and_mobile_visually_inspected": true
+  },
+  "build": "passed",
+  "eslint": "passed",
+  "ruff": "passed",
+  "migration_required": false,
+  "scope": "Local automated verification; previous deployment and human acceptance limitations still apply."
+}

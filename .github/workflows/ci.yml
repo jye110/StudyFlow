@@ -1,0 +1,66 @@
+name: StudyFlow checks
+on: [push, pull_request]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_DATABASE: studyflow_test
+          MYSQL_ROOT_PASSWORD: ci-only-disposable-password
+          MYSQL_ROOT_HOST: "%"
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost --silent"
+          --health-interval=5s --health-timeout=5s --health-retries=30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: ruff check studyflow tests tools/system_verify.py tools/check_coverage.py wsgi.py
+      - run: ruff format --check studyflow tests tools/system_verify.py tools/check_coverage.py wsgi.py
+      - name: MySQL integration and unit tests
+        env:
+          TEST_DATABASE_URL: mysql+pymysql://root:ci-only-disposable-password@127.0.0.1:3306/studyflow_test?charset=utf8mb4
+        run: pytest -q --cov=studyflow --cov-report=term-missing --cov-report=json:tmp/coverage.json --junitxml=tmp/backend.xml
+      - run: python tools/check_coverage.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-evidence
+          path: tmp/
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: pip install -r requirements.txt
+      - run: npm ci && npm run lint && npm run build
+        working-directory: frontend
+      - run: npm run test:calendar && npm run test:study-totals && npm run test:study-history
+        working-directory: frontend
+      - run: npx playwright install --with-deps chrome msedge
+        working-directory: frontend
+      - run: |
+          flask --app wsgi db upgrade
+          waitress-serve --listen=127.0.0.1:5000 --threads=8 wsgi:app > /tmp/studyflow.log 2>&1 &
+      - run: npm run test:e2e
+        working-directory: frontend
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-evidence
+          path: |
+            frontend/test-results/
+            tmp/browser-results.json

@@ -1,0 +1,9 @@
+{
+  "date": "2026-09-10",
+  "scope": "Progress daily/weekly confirmed study history",
+  "unit": {"command": "node --test unit/study-history.test.js", "passed": 5, "failed": 0},
+  "browser": {"command": "npm.cmd run test:e2e -- --grep \"study history switches\"", "passed": 2, "failed": 0, "browsers": ["Chrome", "Edge"], "database": "isolated synthetic fixture"},
+  "checks": ["Build", "ESLint", "Fixture Ruff", "Desktop/mobile visual inspection"],
+  "application_backend_changed": false,
+  "backend_tests_rerun": false
+}

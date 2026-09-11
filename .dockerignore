@@ -1,0 +1,13 @@
+.git
+.venv
+.env
+instance
+tmp
+reference-text
+frontend/node_modules
+frontend/dist
+frontend/test-results
+__pycache__
+**/__pycache__
+.pytest_cache
+.coverage

@@ -1,0 +1,21 @@
+{
+  "date": "2026-09-10",
+  "feature": "Student-confirmed historical study outcomes and missed-time rescheduling",
+  "backend": { "command": "python -m pytest -q", "passed": 156, "failed": 0 },
+  "browsers": { "command": "npm run test:e2e", "projects": ["chrome", "edge"], "passed": 20, "failed": 0 },
+  "checkin_browser_fixture": "Isolated temporary SQLite database on loopback port 5001 with fixed test clock; no production test-only routes",
+  "fixture_shutdown": "Initial Windows process-tree teardown stalled after all 20 passing cases; added explicit local stop-file shutdown and rechecked both check-in cases, which passed and exited normally in 8.4 seconds.",
+  "build": "passed",
+  "eslint": "passed",
+  "ruff": "passed",
+  "visual_review": "390-pixel check-in dialog inspected",
+  "migration": {
+    "revision": "e6284ba7cd13",
+    "database": "local SQLite",
+    "backup_created": true,
+    "original_rows_verified_unchanged": true,
+    "sessions_defaulted_to_pending": 229,
+    "foreign_key_check": "passed"
+  },
+  "scope": "Local automated verification. Existing MySQL, deployment and human acceptance limitations still apply."
+}

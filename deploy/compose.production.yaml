@@ -1,0 +1,48 @@
+services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: studyflow
+      MYSQL_USER: studyflow
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  app:
+    build:
+      context: ..
+    restart: unless-stopped
+    environment:
+      APP_ENV: production
+      PUBLIC_ORIGIN: https://${SITE_HOST:?Set SITE_HOST}
+      ALLOWED_ORIGIN: https://${SITE_HOST}
+      DATABASE_URL: mysql+pymysql://studyflow:${MYSQL_PASSWORD}@db:3306/studyflow?charset=utf8mb4
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+    depends_on:
+      db:
+        condition: service_healthy
+  proxy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_HOST: ${SITE_HOST}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+volumes:
+  mysql_data:
+  caddy_data:
+  caddy_config:

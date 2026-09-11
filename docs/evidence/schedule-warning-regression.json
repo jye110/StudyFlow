@@ -1,0 +1,17 @@
+{
+  "scheduler_tests_passed": 10,
+  "browser_cases": [
+    {
+      "case": "62-minute assignment shows a planning prompt until generation, with real failures still reported",
+      "browser": "chrome",
+      "status": "passed"
+    },
+    {
+      "case": "62-minute assignment shows a planning prompt until generation, with real failures still reported",
+      "browser": "edge",
+      "status": "passed"
+    }
+  ],
+  "build": "passed",
+  "lint": "passed"
+}

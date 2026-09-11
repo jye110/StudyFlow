@@ -1,0 +1,17 @@
+{
+  "date": "2026-09-10",
+  "feature": "Trim reduced assignment estimates and fill only unscheduled work",
+  "backend": { "command": "python -m pytest -q", "passed": 144, "failed": 0 },
+  "browsers": {
+    "projects": ["chrome", "edge"],
+    "existing_regression_passed": 16,
+    "new_cases_passed": 2,
+    "initial_run": "16 passed; 2 new cases failed on a test-only duration-text mismatch",
+    "targeted_recheck": "npm run test:e2e -- remaining-planning.spec.js: 2 passed"
+  },
+  "build": "passed",
+  "eslint": "passed",
+  "ruff": "passed",
+  "migration": "not required",
+  "scope": "Local automated verification. Existing MySQL, deployment and human acceptance limitations still apply."
+}

@@ -1,0 +1,10 @@
+{
+  "feature": "Show assignment information when opening a calendar study session",
+  "browser_cases_passed": 4,
+  "specs": ["session-assignment-info.spec.js", "session-outcomes.spec.js"],
+  "browsers": ["chrome", "edge"],
+  "checks": ["future/active/ended dialogs", "study totals after confirmation", "long and empty Notes", "plain text escaping", "accepted breakdown", "mobile overflow", "no mutation on open/cancel", "production build", "ESLint"],
+  "visual_review": "desktop and mobile session assignment screenshots inspected",
+  "database": "isolated synthetic test fixture",
+  "backend_changed": false
+}
