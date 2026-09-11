@@ -26,7 +26,7 @@ To create a synthetic account with three courses and seven assignments:
 .\.venv\Scripts\python.exe -m flask --app wsgi seed-demo
 ```
 
-The command prompts for a password and defaults to `demo@studyflow.local`. It refuses to overwrite existing accounts. Seed data is optional; registration always starts with an empty workspace. The local instance prepared during implementation already has `demo@studyflow.local` with password `StudyFlowDemo2026!`. This is a publicly documented local demonstration account, not a deployment credential. New installations do not create it automatically.
+The command creates an account with the default email `demo@studyflow.local` and prompts you to choose its password. If that account already exists, the command stops without changing any data. Demonstration data is optional and is not created automatically on installation. Accounts registered through the interface start with an empty workspace.
 
 ## What students can do
 
