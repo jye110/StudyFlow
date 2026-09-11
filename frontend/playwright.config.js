@@ -1,4 +1,12 @@
 import { defineConfig } from "@playwright/test";
+import { existsSync } from "node:fs";
+
+const localPython = process.platform === "win32"
+  ? "../.venv/Scripts/python.exe"
+  : "../.venv/bin/python";
+const fixturePython = existsSync(new URL(localPython, import.meta.url))
+  ? `"${localPython}"`
+  : "python";
 
 export default defineConfig({
   testDir: "./e2e",
@@ -7,9 +15,7 @@ export default defineConfig({
   timeout: 60000,
   globalTeardown: "./stop-checkin-server.js",
   webServer: {
-    command: process.platform === "win32"
-      ? "..\\.venv\\Scripts\\python.exe ../tools/checkin_test_server.py"
-      : "../.venv/bin/python ../tools/checkin_test_server.py",
+    command: `${fixturePython} ../tools/checkin_test_server.py`,
     url: "http://127.0.0.1:5001/api/health",
     timeout: 30000,
     reuseExistingServer: false,

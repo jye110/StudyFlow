@@ -1,5 +1,9 @@
 # Verification record
 
+## CI fixture Python discovery
+
+The first GitHub Actions run passed the backend/MySQL job but stopped before browser tests with `../.venv/bin/python: not found` (exit 127). The runner installs Python and dependencies globally; the fixture command had assumed a local virtual environment. Playwright now checks for the platform's local `.venv` interpreter and otherwise uses `python` from PATH. Local ESLint and the Chrome apply-settings browser test passed after the change; GitHub Actions validates the Linux fallback.
+
 ## GitHub upload preparation
 
 The complete SQLite backend suite passed: 225 tests. All 18 frontend unit tests passed (calendar geometry, assignment study totals and study history). Eight Chrome/Edge browser cases for AI Notes, applying settings, session assignment information and session outcomes passed together after giving each workflow its own synthetic account. This prevents cross-test changes to study history when GitHub Actions runs the entire browser suite. ESLint, Python lint/format and required backend coverage checks passed. GitHub Actions now also runs the frontend unit suites. MySQL and the full browser suite remain covered by the supplied CI workflow; this local preparation did not run MySQL.
