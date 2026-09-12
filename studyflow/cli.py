@@ -5,7 +5,71 @@ from sqlalchemy import select
 from werkzeug.security import generate_password_hash
 
 from .auth import now
-from .models import Assignment, Course, User, db
+from .models import Assignment, Course, StudySession, User, db
+
+
+def add_demo_history(user):
+    """Append identifiable examples once; preserve any subsequent student edits."""
+    if db.session.scalar(
+        select(Course.id).where(Course.user_id == user.id, Course.code == "DEMO-HISTORY")
+    ):
+        return False
+    instant = now().replace(second=0, microsecond=0)
+    course = Course(
+        user_id=user.id, name="Study history examples", code="DEMO-HISTORY", color="#0d9488"
+    )
+    db.session.add(course)
+    db.session.flush()
+    examples = [
+        (
+            "Demo: confirmed study",
+            120,
+            "In Progress",
+            "Three completed sessions contribute 90 minutes to Progress. The assignment still has 30 minutes remaining.",
+        ),
+        (
+            "Demo: awaiting confirmation",
+            60,
+            "Not Started",
+            "Review the past 30-minute session in Study session check-in and choose Completed or Not completed.",
+        ),
+        (
+            "Demo: missed study",
+            60,
+            "Not Started",
+            "The past session was marked Not completed. Its time remains unscheduled; use Schedule remaining to plan it.",
+        ),
+    ]
+    assignments = []
+    for title, minutes, status, notes in examples:
+        assignment = Assignment(
+            course_id=course.id,
+            title=title,
+            notes=notes,
+            due_at=instant + timedelta(days=7),
+            estimated_minutes=minutes,
+            priority="Medium",
+            status=status,
+        )
+        db.session.add(assignment)
+        assignments.append(assignment)
+    db.session.flush()
+    for index, age, minutes, outcome in [
+        (0, timedelta(days=3), 30, "completed"),
+        (0, timedelta(days=2), 45, "completed"),
+        (0, timedelta(days=1), 15, "completed"),
+        (1, timedelta(hours=2), 30, "pending"),
+        (2, timedelta(hours=1), 30, "missed"),
+    ]:
+        db.session.add(
+            StudySession(
+                assignment_id=assignments[index].id,
+                starts_at=instant - age,
+                minutes=minutes,
+                outcome=outcome,
+            )
+        )
+    return True
 
 
 def register_cli(app):
@@ -58,5 +122,19 @@ def register_cli(app):
                     status=status,
                 )
             )
+        add_demo_history(user)
         db.session.commit()
         click.echo(f"Created synthetic demo account: {email}")
+
+    @app.cli.command("seed-demo-history")
+    @click.option("--email", default="demo@studyflow.local", show_default=True)
+    def seed_demo_history(email):
+        """Add past-session examples to an existing account without replacing its data."""
+        user = db.session.scalar(select(User).where(User.email == email.lower()))
+        if user is None:
+            raise click.ClickException("Account not found. Create it with seed-demo first.")
+        if add_demo_history(user):
+            db.session.commit()
+            click.echo("Added five past sessions: three completed, one pending and one missed.")
+        else:
+            click.echo("Study history examples already exist. No data was changed.")

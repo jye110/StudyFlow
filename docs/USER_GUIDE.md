@@ -61,3 +61,13 @@ Configure the optional API connection using the [README instructions](../README.
 Notes are required for AI suggestions, though they remain optional when creating an assignment. Empty or whitespace-only Notes disable the request button and are rejected by the backend before any provider call. Add the specific assignment topic, required work and expected deliverable. The AI assesses whether the title and Notes provide enough information: unclear Notes return a reminder explaining what to add, with an **Edit notes** shortcut, instead of generic study advice. This assessment is performed by the model, not a minimum text-length rule.
 
 Only assignment title, Notes, estimated minutes, and priority are sent when requesting AI; account records, passwords, and sessions are excluded. The request dialog discloses this before sending. Suggestions are marked as AI-generated and become persistent only on acceptance; clarification or failure does not replace an accepted breakdown. The integration follows the [official structured outputs documentation](https://developers.openai.com/api/docs/guides/structured-outputs). Automated tests use deterministic provider responses; they verify application behavior rather than guarantee model judgment on every brief.
+
+## Demo history examples
+
+The **Study history examples** course contains five sessions dated relative to when the examples are created:
+
+- **Demo: confirmed study** has three completed sessions of 30, 45 and 15 minutes across the previous three days. Progress shows 90 confirmed minutes in the weekly/monthly charts.
+- **Demo: awaiting confirmation** has a past 30-minute session. Open it in Calendar or **Study session check-in**, then choose Completed or Not completed.
+- **Demo: missed study** has a past 30-minute session marked Not completed. It appears under Reviewed sessions and contributes no completed study time; missing work can be planned with Schedule remaining.
+
+New demo accounts include these examples. For an existing account, run `flask --app wsgi seed-demo-history` (optionally with `--email YOUR_DEMO_EMAIL`). This adds a separate example course without replacing existing courses, assignments, sessions, settings or the password. Repeating the command leaves the examples and any changes you made to them intact. Sessions retain their original dates as time passes.

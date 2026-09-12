@@ -1,5 +1,11 @@
 # Verification record
 
+## Follow-up: past study sessions in demo accounts
+
+New demo accounts include a separate Study history examples course with three assignments and five past sessions relative to seed time: three completed sessions totaling 90 minutes across the last three days, one pending 30-minute session and one missed 30-minute session. The existing seed-demo command still refuses to overwrite accounts. The new seed-demo-history command appends these examples to an existing account once, preserving existing records and any later edits to the examples. No schema migration is required.
+
+Validation: 16 backend demo/check-in tests passed, including successful seeding/login, past timestamps, study totals, confirmation, preservation through planning, existing-data preservation, duplicate protection and owner isolation. Both Chrome and Edge passed the seeded demo workflow for Dashboard, Calendar, check-in and weekly/monthly progress charts; confirming the pending example increases chart totals from 90 to 120 minutes. The first browser attempt used a visible button label instead of its accessible name; corrected the test selector and both browsers passed. ESLint and Ruff lint/format checks passed. Added the examples to the existing local demo after a SQLite backup and verified that its previous user, course, assignment and session records remained unchanged.
+
 ## Follow-up: always offer regeneration after applying settings
 
 Every successful Apply settings now opens the regeneration confirmation, including unchanged settings, no conflicts and an empty plan. Conflicts still show their reasons; the no-conflict message explicitly asks whether to regenerate. Keep current plan or dismissing the dialog retains the saved settings and current sessions. Only confirming Regenerate plan invokes scheduling. Failed validation still leaves the settings editor open.

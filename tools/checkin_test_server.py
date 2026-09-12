@@ -38,6 +38,16 @@ def main():
         with app.app_context():
             upgrade(directory=str(ROOT / "migrations"))
         for browser in ["chrome", "edge"]:
+            seeded = app.test_cli_runner().invoke(
+                args=[
+                    "seed-demo",
+                    "--email",
+                    f"{browser}-demo@example.test",
+                    "--password",
+                    "correct password 123",
+                ]
+            )
+            assert seeded.exit_code == 0, seeded.output
             # Each workflow owns its history, including when the entire suite runs together.
             for workflow in ("checkin", "ai-notes", "apply-settings", "session-details"):
                 client = Client(app, email=f"{browser}-{workflow}@example.test")

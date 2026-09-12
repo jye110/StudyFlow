@@ -46,13 +46,21 @@ Add specific assignment requirements to **Notes**, then select **Task breakdown 
 
 ## Demonstration data
 
-After initial setup, optionally create an account with three sample courses and seven assignments:
+After initial setup, optionally create an account with four sample courses, ten assignments and five past study sessions:
 
 ```powershell
 .\.venv\Scripts\python.exe -m flask --app wsgi seed-demo
 ```
 
 The default email is `demo@studyflow.local`; you choose the password when prompted. Existing accounts are never overwritten, and ordinary registration starts with an empty workspace.
+
+For an existing demo account, add the past-session examples once without replacing its data:
+
+```powershell
+.\.venv\Scripts\python.exe -m flask --app wsgi seed-demo-history
+```
+
+The examples include completed study, a session awaiting confirmation and missed study. See [demo history examples](docs/USER_GUIDE.md#demo-history-examples).
 
 ## Tests and documentation
 
