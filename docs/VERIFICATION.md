@@ -1,5 +1,11 @@
 # Verification record
 
+## Follow-up: shortening sessions leaves work unscheduled
+
+Shortening a future session now updates only that session and leaves the removed minutes as unscheduled work. Other sessions retain their IDs, times and durations, including sessions belonging to other assignments. The assignment estimate is unchanged. Schedule remaining explicitly fills the missing work while preserving existing sessions. Moving and shortening together uses the same behavior and rejects overlaps with any retained session. Extending, moving without shortening and deleting still use automatic compensation. The editor hint and success message describe the distinction; no database migration is required.
+
+Validation: all 228 SQLite backend tests passed, including preserved sessions across assignments, explicit fill, daily budgets, moving-and-shortening conflict rejection, and existing extension/deletion behavior. Both Chrome and Edge passed the calendar workflow for shortening, persistent unscheduled totals, explicit fill, extension and deletion using isolated databases. ESLint, production build, Ruff lint/format and required backend coverage checks passed. Restart the backend and refresh the browser to use the change.
+
 ## CI browser test initialization and current planning rules
 
 After the interpreter fix, GitHub Actions run 34557251141 passed the backend/MySQL job and 29 of 38 browser cases. Five authentication failures came from test API requests racing the page's initial CSRF/session bootstrap. API-authenticated browser tests now wait for the sign-in form before fetching their token. Both Chrome and Edge exposed outdated planning fixtures: the Busy time exclusion test now blocks the entire 09:00-22:00 study window, and the session compensation fixture explicitly includes end_hour. Application authentication and scheduling behavior are unchanged.

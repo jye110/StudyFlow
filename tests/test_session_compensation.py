@@ -9,7 +9,55 @@ from tests.conftest import T0, Client
 from tests.test_busy_times import once
 
 
-@pytest.mark.parametrize("minutes", [15, 45, 75])
+@pytest.mark.parametrize("minutes", [1, 15])
+def test_shortening_preserves_other_sessions_until_explicit_fill(client, minutes):
+    course = client.course()
+    assignment = client.assignment(course["id"], estimated_minutes=90)
+    client.assignment(course["id"], title="Other assignment")
+    original = client.plan().json["sessions"]
+    first = original[0]
+    result = client.send("PATCH", f"/sessions/{first['id']}", {"minutes": minutes})
+    assert result.status_code == 200 and "replanned" not in result.json
+    expected = [{**first, "minutes": minutes}, *original[1:]]
+    schedule = client.send("GET", "/schedule").json
+    assert schedule["sessions"] == expected
+    assert sum(item["minutes"] for item in schedule["unallocated"]) == 30 - minutes
+    assert client.send("GET", f"/assignments/{assignment['id']}").json["estimated_minutes"] == 90
+    assert client.send("GET", "/schedule").json == schedule
+    filled = client.send("POST", "/schedule/fill-remaining", schedule["settings"]).json
+    assert all(session in filled["sessions"] for session in expected)
+    assert not filled["unallocated"]
+    assert sum(session["minutes"] for session in filled["sessions"]) == 150
+
+
+def test_moving_and_shortening_rejects_overlap_with_retained_later_session(client):
+    client.assignment(client.course()["id"])
+    original = client.plan().json["sessions"]
+    response = client.send(
+        "PATCH",
+        f"/sessions/{original[0]['id']}",
+        {"minutes": 15, "starts_at": iso(T0 + timedelta(minutes=25))},
+    )
+    assert response.status_code == 422
+    assert client.send("GET", "/schedule").json["sessions"] == original
+
+
+def test_moving_and_shortening_to_free_time_preserves_other_sessions(client):
+    client.assignment(client.course()["id"])
+    original = client.plan().json["sessions"]
+    result = client.send(
+        "PATCH",
+        f"/sessions/{original[0]['id']}",
+        {"minutes": 15, "starts_at": iso(T0 + timedelta(hours=2))},
+    )
+    assert result.status_code == 200 and "replanned" not in result.json
+    schedule = client.send("GET", "/schedule").json
+    assert original[1] in schedule["sessions"]
+    assert len(schedule["sessions"]) == 2
+    assert schedule["unallocated"][0]["minutes"] == 15
+
+
+@pytest.mark.parametrize("minutes", [45, 75])
 def test_resize_session_balances_remaining_estimate_without_reusing_released_time(client, minutes):
     assignment = client.assignment(client.course()["id"], estimated_minutes=90)
     first = client.plan().json["sessions"][0]
@@ -44,7 +92,8 @@ def test_resize_preserves_earlier_session_and_active_history(app, client):
     assert result.status_code == 200
     sessions = client.send("GET", "/schedule").json["sessions"]
     assert original[0] in sessions
-    assert sum(s["minutes"] for s in sessions) == 90
+    assert sum(s["minutes"] for s in sessions) == 75
+    assert original[2] in sessions
     assert client.send("DELETE", f"/sessions/{original[0]['id']}").status_code == 422
 
 
@@ -54,7 +103,7 @@ def test_compensation_honors_busy_times_and_earliest_start(client):
     b = client.assignment(course["id"], start_mode="custom", start_at=iso(T0 + timedelta(hours=2)))
     original = client.plan().json["sessions"]
     once(client, start=T0 + timedelta(minutes=30), end=T0 + timedelta(hours=1))
-    result = client.send("PATCH", f"/sessions/{original[0]['id']}", {"minutes": 15})
+    result = client.send("DELETE", f"/sessions/{original[0]['id']}")
     assert result.status_code == 200
     sessions = client.send("GET", "/schedule").json["sessions"]
     assert sum(s["minutes"] for s in sessions if s["assignment_id"] == a["id"]) == 60
@@ -93,11 +142,10 @@ def test_compensation_reuses_saved_study_settings(client):
     }
     first = client.send("POST", "/schedule/generate", settings).json["sessions"][0]
     assert client.send("GET", "/schedule").json["settings"] == {**settings, "end_hour": 22}
-    result = client.send("PATCH", f"/sessions/{first['id']}", {"minutes": 15})
+    result = client.send("DELETE", f"/sessions/{first['id']}")
     assert result.status_code == 200 and result.json["replanned"]["remaining_minutes"] == 0
     sessions = client.send("GET", "/schedule").json["sessions"]
     assert [s["starts_at"] for s in sessions] == [
-        "2026-09-11T01:00:00Z",
         "2026-09-11T01:30:00Z",
         "2026-09-11T02:00:00Z",
     ]

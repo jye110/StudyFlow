@@ -55,7 +55,7 @@ def test_missed_history_is_not_credited_by_any_full_work_planner(app, client, mo
     elif mode == "generate":
         result = client.plan()
     else:
-        result = client.send("PATCH", f"/sessions/{original[1]['id']}", {"minutes": 15})
+        result = client.send("PATCH", f"/sessions/{original[1]['id']}", {"minutes": 45})
     assert result.status_code == 200
     after = client.send("GET", "/schedule").json
     assert not after["unallocated"]

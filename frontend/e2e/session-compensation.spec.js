@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test("calendar event deletion and study resize/delete automatically compensate later work", async ({
+test("shortening keeps missing time unscheduled until filling; extending and deleting compensate", async ({
   page,
 }) => {
   await page.goto("/");
@@ -116,21 +116,33 @@ test("calendar event deletion and study resize/delete automatically compensate l
     45,
   );
   expect(schedule.unallocated).toEqual([]);
+  const beforeShortening = schedule.sessions;
   await study.first().click();
   await page.getByLabel("Duration (minutes)").fill("15");
   await page.getByRole("button", { name: "Save session", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   schedule = await (await page.request.get("/api/schedule")).json();
-  expect(schedule.sessions.reduce((sum, s) => sum + s.minutes, 0)).toBe(90);
-  expect(schedule.sessions.find((s) => s.id === original[0].id).minutes).toBe(
-    15,
-  );
+  expect(schedule.sessions.reduce((sum, s) => sum + s.minutes, 0)).toBe(60);
+  expect(schedule.sessions).toEqual(beforeShortening.map((s) =>
+    s.id === original[0].id ? { ...s, minutes: 15 } : s));
+  expect(schedule.unallocated.reduce((sum, item) => sum + item.minutes, 0)).toBe(30);
+  await expect(page.locator(".toast")).toContainText("Use Schedule remaining");
+  await expect(page.getByRole("button", { name: "Unscheduled work", exact: true })).toContainText("30 min");
+  await page.reload();
+  expect((await (await page.request.get("/api/schedule")).json()).sessions).toEqual(schedule.sessions);
   const resume = new Date(original[0].starts_at).getTime() + 45 * 60000;
   expect(
     schedule.sessions
       .filter((s) => s.id !== original[0].id)
       .every((s) => new Date(s.starts_at).getTime() >= resume),
   ).toBeTruthy();
+  const shortened = schedule.sessions;
+  await page.getByRole("button", { name: "Schedule remaining", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Unscheduled work", exact: true })).toContainText("0 min");
+  schedule = await (await page.request.get("/api/schedule")).json();
+  for (const kept of shortened) expect(schedule.sessions).toContainEqual(kept);
+  expect(schedule.sessions.reduce((sum, s) => sum + s.minutes, 0)).toBe(90);
+  expect(schedule.unallocated).toEqual([]);
   await study.first().click();
   await page
     .getByRole("dialog")

@@ -140,7 +140,9 @@ export function Editor({
             ? "Assignment saved. Excess future study time removed; started sessions preserved."
             : "Assignment saved. Choose Schedule remaining to arrange any unplanned work."
           : isSession
-            ? adjustmentMessage("saved", result.replanned)
+            ? payload.minutes < record.minutes
+              ? "Session shortened. Use Schedule remaining to arrange the missing study time."
+              : adjustmentMessage("saved", result.replanned)
             : "Course saved.",
         result.replanned,
       );
@@ -331,11 +333,10 @@ export function Editor({
                 max: 240,
               })}
               <p className="field-hint">
-                Saving automatically adjusts later study sessions to match the
-                remaining assignment estimates. Earlier sessions stay in place.
-                Deleted or shortened time stays free; missing study time is
-                added later. Your last plan settings, busy times, earliest
-                starts and applicable deadlines are respected.
+                Shortening this session leaves the missing study time unscheduled
+                and keeps other sessions in place. Use Schedule remaining when
+                you want to arrange it. Extending, moving without shortening,
+                or deleting a session automatically adjusts later study time.
               </p>
             </>
           ) : (

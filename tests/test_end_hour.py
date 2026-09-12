@@ -89,7 +89,7 @@ def test_end_is_saved_and_all_replanning_paths_obey_it(client, action):
         once(client, end=T0 + timedelta(hours=1))
         response = client.send("POST", "/schedule/repair-conflicts", SETTINGS)
     else:
-        response = client.send("PATCH", f"/sessions/{first['id']}", {"minutes": 15})
+        response = client.send("DELETE", f"/sessions/{first['id']}")
     assert response.status_code == 200
     sessions = client.send("GET", "/schedule").json["sessions"]
     assert any(s["starts_at"][:10] > iso(T0)[:10] for s in sessions)

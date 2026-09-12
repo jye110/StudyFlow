@@ -720,6 +720,7 @@ def session_detail(record_id):
     start = values.get("starts_at", record.starts_at)
     minutes = values.get("minutes", record.minutes)
     end = start + timedelta(minutes=minutes)
+    shortening = minutes < record.minutes
     instant = now()
     if record.starts_at < instant:
         raise APIError("Past and active sessions are preserved as study history.", 422)
@@ -754,7 +755,7 @@ def session_detail(record_id):
         )
     for other in db.session.scalars(session_query().where(StudySession.id != record.id)):
         if (
-            other.starts_at < min(start, record.starts_at)
+            (shortening or other.starts_at < min(start, record.starts_at))
             and start < other.starts_at + timedelta(minutes=other.minutes)
             and end > other.starts_at
         ):
@@ -763,6 +764,12 @@ def session_detail(record_id):
                 422,
                 {"starts_at": "Choose a time without another session."},
             )
+    if shortening:
+        # Keep the removed minutes unscheduled until the student explicitly fills the plan.
+        record.starts_at, record.minutes = start, minutes
+        g.user.planning_settings = settings
+        db.session.commit()
+        return jsonify(session_json(record))
     replanned = compensate_sessions(record, start, minutes, False, instant, settings)
     db.session.commit()
     return jsonify({**session_json(record), "replanned": replanned})

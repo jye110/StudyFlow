@@ -130,7 +130,7 @@ def test_conflict_repair_can_fill_later_same_day_without_exceeding_budget(client
     ]
 
 
-def test_shortening_session_compensates_with_remaining_daily_budget(client):
+def test_shortening_waits_for_fill_with_remaining_daily_budget(client):
     client.assignment(
         client.course()["id"], estimated_minutes=120, due_at=iso(T0 + timedelta(days=3))
     )
@@ -140,4 +140,11 @@ def test_shortening_session_compensates_with_remaining_daily_budget(client):
     totals = defaultdict(int)
     for s in sessions:
         totals[s["starts_at"][:10]] += s["minutes"]
+    assert list(totals.values()) == [45, 60]
+    filled = client.send("POST", "/schedule/fill-remaining", SETTINGS).json
+    assert all(session in filled["sessions"] for session in sessions)
+    assert not filled["unallocated"]
+    totals.clear()
+    for session in filled["sessions"]:
+        totals[session["starts_at"][:10]] += session["minutes"]
     assert list(totals.values()) == [60, 60]
