@@ -1,5 +1,11 @@
 # Verification record
 
+## CI: earliest-start test at the evening cutoff
+
+Run 34717190461 passed the backend/MySQL job and 38 browser cases. The remaining Chrome/Edge case incorrectly required exactly two sessions for 60 minutes. At 20:31 UTC, the one-hour delay and 22:00 cutoff correctly produce 29 + 30 + 1 minutes across two days. The test now checks the total duration, positive chunks of at most 30 minutes, the explicit 09:00-22:00 window and non-overlapping chronological sessions, while retaining its custom-date and week-before assertions. Application scheduling is unchanged.
+
+Reproduced both failures with an isolated database and a backend clock fixed at 20:31 UTC; both browsers passed after the assertion fix against the same clock. ESLint passed. GitHub Actions reruns the complete Linux suite after push.
+
 ## Follow-up: past study sessions in demo accounts
 
 New demo accounts include a separate Study history examples course with three assignments and five past sessions relative to seed time: three completed sessions totaling 90 minutes across the last three days, one pending 30-minute session and one missed 30-minute session. The existing seed-demo command still refuses to overwrite accounts. The new seed-demo-history command appends these examples to an existing account once, preserving existing records and any later edits to the examples. No schema migration is required.

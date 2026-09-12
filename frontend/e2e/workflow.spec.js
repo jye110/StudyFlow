@@ -64,6 +64,7 @@ test("earliest start choices persist and control generated sessions", async ({
       data: {
         timezone: "UTC",
         start_hour: 9,
+        end_hour: 22,
         daily_minutes: 180,
         horizon_days: 60,
       },
@@ -71,7 +72,21 @@ test("earliest start choices persist and control generated sessions", async ({
     expect(response.ok()).toBeTruthy();
     const plan = await response.json();
     expect(plan.unallocated).toEqual([]);
-    expect(plan.sessions).toHaveLength(2);
+    // Near the evening cutoff, 60 minutes can span more than two sessions.
+    expect(plan.sessions.reduce((total, session) => total + session.minutes, 0)).toBe(60);
+    let previousEnd = 0;
+    for (const session of plan.sessions) {
+      const start = new Date(session.starts_at);
+      const end = start.getTime() + session.minutes * 60000;
+      const cutoff = new Date(start);
+      cutoff.setUTCHours(22, 0, 0, 0);
+      expect(session.minutes).toBeGreaterThan(0);
+      expect(session.minutes).toBeLessThanOrEqual(30);
+      expect(start.getUTCHours()).toBeGreaterThanOrEqual(9);
+      expect(end).toBeLessThanOrEqual(cutoff.getTime());
+      expect(start.getTime()).toBeGreaterThanOrEqual(previousEnd);
+      previousEnd = end;
+    }
     return plan.sessions;
   };
   const sessions = await generate();
