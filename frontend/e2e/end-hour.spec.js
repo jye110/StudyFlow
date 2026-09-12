@@ -33,8 +33,11 @@ test("planning end time persists and stops study before the evening cutoff", asy
   await expect(page.getByLabel("Finish studying by", { exact: true }).locator('option[value="18"]')).toBeDisabled();
   await page.getByLabel("Finish studying by", { exact: true }).selectOption("19");
   await page.getByRole("button", { name: "Apply settings", exact: true }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
-  await page.getByRole("button", { name: "Generate plan", exact: true }).click();
+  const prompt = page.getByRole("dialog", { name: "Regenerate your study plan?" });
+  await expect(prompt).toContainText("No conflicts with existing study sessions.");
+  expect((await (await page.request.get("/api/schedule")).json()).sessions).toEqual([]);
+  await prompt.getByRole("button", { name: "Regenerate plan", exact: true }).click();
+  await expect(prompt).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Regenerate plan", exact: true })).toBeVisible();
   const plan = (await (await page.request.get("/api/schedule")).json());
   expect(plan.settings.end_hour).toBe(19);

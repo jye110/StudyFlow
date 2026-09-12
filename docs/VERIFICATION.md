@@ -1,5 +1,11 @@
 # Verification record
 
+## Follow-up: always offer regeneration after applying settings
+
+Every successful Apply settings now opens the regeneration confirmation, including unchanged settings, no conflicts and an empty plan. Conflicts still show their reasons; the no-conflict message explicitly asks whether to regenerate. Keep current plan or dismissing the dialog retains the saved settings and current sessions. Only confirming Regenerate plan invokes scheduling. Failed validation still leaves the settings editor open.
+
+Validation: six Chrome/Edge browser cases passed using isolated data, covering no-conflict keep/dismiss/regenerate, unchanged settings, conflicts, empty-plan generation, end-hour limits and mobile/layout regressions. ESLint and production build passed. Frontend-only change; refresh the browser to use it.
+
 ## Follow-up: shortening sessions leaves work unscheduled
 
 Shortening a future session now updates only that session and leaves the removed minutes as unscheduled work. Other sessions retain their IDs, times and durations, including sessions belonging to other assignments. The assignment estimate is unchanged. Schedule remaining explicitly fills the missing work while preserving existing sessions. Moving and shortening together uses the same behavior and rejects overlaps with any retained session. Extending, moving without shortening and deleting still use automatic compensation. The editor hint and success message describe the distinction; no database migration is required.

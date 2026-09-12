@@ -79,8 +79,7 @@ export function Schedule({ schedule, edit, onGenerated, notify, adjustment }) {
       setSettings(result.settings);
       await onGenerated();
       setPanel(null);
-      setSettingsConflicts(result.conflicts.length ? result.conflicts : null);
-      if (!result.conflicts.length) notify("Settings applied. No conflicts with existing study sessions.");
+      setSettingsConflicts(result.conflicts);
     } catch (e) {
       setError(e);
     } finally {
@@ -312,8 +311,7 @@ export function Schedule({ schedule, edit, onGenerated, notify, adjustment }) {
                   sessions count toward this total; busy time does not.
                 </p>
                 <p className="field-hint">
-                  Apply saves your settings and checks existing sessions for conflicts.
-                  If any are found, you can choose whether to regenerate your plan.
+                  Apply saves your settings, checks for conflicts and asks whether to regenerate your plan.
                   Sessions stay in place until you choose to regenerate.
                 </p>
                 <details className="schedule-help">
@@ -471,16 +469,21 @@ export function Schedule({ schedule, edit, onGenerated, notify, adjustment }) {
           )}
         </Modal>
       )}
-      {(confirm || settingsConflicts) && (
+      {(confirm || settingsConflicts !== null) && (
         <Modal
           title="Regenerate your study plan?"
           onClose={() => { setConfirm(false); setSettingsConflicts(null); }}
         >
           <div className="modal-body">
-            {settingsConflicts && (
+            {settingsConflicts !== null && (
               <>
-                <p>Settings applied. {settingsConflicts.length} future study sessions conflict with your settings or busy time. Regenerate to use the new settings?</p>
-                <ul>
+                <p>
+                  {settingsConflicts.length
+                    ? `Settings applied. ${settingsConflicts.length} future study sessions conflict with your settings or busy time.`
+                    : "Settings applied. No conflicts with existing study sessions."}
+                  {" "}Regenerate to use the new settings?
+                </p>
+                {settingsConflicts.length > 0 && <ul>
                   {[
                     ["outside_hours", "Sessions fall outside your study start/end times."],
                     ["daily_budget", "Scheduled study exceeds your daily total, including earlier study that day."],
@@ -488,7 +491,7 @@ export function Schedule({ schedule, edit, onGenerated, notify, adjustment }) {
                     ["busy_time", "Sessions overlap your busy time."],
                   ].filter(([reason]) => settingsConflicts.some((item) => item.reasons.includes(reason)))
                     .map(([reason, label]) => <li key={reason}>{label}</li>)}
-                </ul>
+                </ul>}
               </>
             )}
             <p>
@@ -498,7 +501,7 @@ export function Schedule({ schedule, edit, onGenerated, notify, adjustment }) {
           </div>
           <footer className="modal-footer">
             <button className="button" onClick={() => { setConfirm(false); setSettingsConflicts(null); }}>
-              {settingsConflicts ? "Keep current plan" : "Cancel"}
+              {settingsConflicts !== null ? "Keep current plan" : "Cancel"}
             </button>
             <button className="button primary" onClick={() => generate()}>
               Regenerate plan
