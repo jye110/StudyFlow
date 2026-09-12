@@ -12,7 +12,9 @@ from .validation import APIError, body, email, password, text, validate
 
 auth = Blueprint("auth", __name__, url_prefix="/api/auth")
 COOKIE = "studyflow_session"
-GENERIC_ERROR = "Unable to sign in. Check your details or try again later."
+GENERIC_ERROR = (
+    "Email or password is incorrect. Check your email spelling and password capitalization."
+)
 # Equal-cost password verification even when the email is unknown.
 DUMMY_HASH = generate_password_hash("not-a-real-account-password")
 
@@ -151,16 +153,29 @@ def login():
     data = body(["email", "password"])
     account = data.get("email", "")
     candidate = data.get("password", "")
-    if not isinstance(account, str) or not isinstance(candidate, str):
-        raise APIError(GENERIC_ERROR, 401)
-    if len(account) > 254 or len(candidate) > 128:
-        raise APIError(GENERIC_ERROR, 401)
-    account = account.strip().lower()
+    fields = {}
+    try:
+        account = email(account)
+    except ValueError:
+        fields["email"] = (
+            "Enter your email address."
+            if isinstance(account, str) and not account.strip()
+            else "Enter a valid email address, such as name@example.com."
+        )
+    if not isinstance(candidate, str) or not candidate:
+        fields["password"] = "Enter your password."
+    elif len(candidate) > 128:
+        fields["password"] = "Password must be 128 characters or fewer."
+    if fields:
+        raise APIError("Check the highlighted fields.", 422, fields)
     rows = limit_rows(account)
     instant = now()
     if any(row.blocked_until and row.blocked_until > instant for row in rows):
         db.session.commit()
-        raise APIError(GENERIC_ERROR, 429)
+        raise APIError(
+            "Too many failed sign-in attempts. Please wait up to 15 minutes before trying again.",
+            429,
+        )
     user = db.session.scalar(select(User).where(User.email == account))
     if not check_password_hash(user.password_hash if user else DUMMY_HASH, candidate) or not user:
         for row in rows:

@@ -1,5 +1,11 @@
 # Verification record
 
+## Follow-up: clearer sign-in feedback
+
+Sign-in now identifies missing email/password, invalid email format and overlong passwords with accessible field errors (422). Incorrect credentials use the same explicit email-or-password message for unknown accounts and wrong passwords (401); rate limiting has a separate 15-minute wait reminder (429). Email normalization, password case sensitivity, session protection and lockout expiry are preserved.
+
+Validation: 32 authentication/password backend cases passed, including identical responses for unknown accounts and wrong passwords, invalid input remaining unauthenticated, and independent account/IP lockout expiry. Chrome and Edge passed real API/browser flows for empty fields, malformed email, both credential failures and successful correction. ESLint and Ruff checks passed. Restart the backend to use the new responses; no migration or frontend rebuild is needed.
+
 ## CI: earliest-start test at the evening cutoff
 
 Run 34717190461 passed the backend/MySQL job and 38 browser cases. The remaining Chrome/Edge case incorrectly required exactly two sessions for 60 minutes. At 20:31 UTC, the one-hour delay and 22:00 cutoff correctly produce 29 + 30 + 1 minutes across two days. The test now checks the total duration, positive chunks of at most 30 minutes, the explicit 09:00-22:00 window and non-overlapping chronological sessions, while retaining its custom-date and week-before assertions. Application scheduling is unchanged.

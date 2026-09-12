@@ -16,7 +16,7 @@ CSRF bootstrap and registration/login are available without an authenticated use
 | GET | `/health` | `{status: "ok", service: "StudyFlow"}` |
 | GET | `/auth/csrf` | Current user and CSRF bootstrap |
 | POST | `/auth/register` | `name`, `email`, `password`; 201 and new session |
-| POST | `/auth/login` | `email`, `password`; 200 and new session |
+| POST | `/auth/login` | `email`, `password`; 200 and new session; 422 with field errors for invalid input, 401 for incorrect credentials, 429 with a wait reminder for rate limiting |
 | POST | `/auth/change-password` | Authenticated; `current_password`, `new_password`, `confirm_password`; 200 with user and rotated CSRF/session, revokes other account sessions |
 | GET | `/auth/me` | Authenticated user identity |
 | POST | `/auth/logout` | Empty object; invalidates session |

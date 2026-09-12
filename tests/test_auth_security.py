@@ -66,12 +66,17 @@ def test_tc02_tc03_tc28_login_logout_replay(app, client):
             403,
         )
     fresh = Client(app, register=False)
+    failures = []
     for credentials in [
         {"email": "a@example.test", "password": "wrong"},
         {"email": "unknown@example.test", "password": "wrong"},
     ]:
-        assert fresh.send("POST", "/auth/login", credentials).status_code == 401
+        failure = fresh.send("POST", "/auth/login", credentials)
+        assert failure.status_code == 401
+        failures.append(failure.json)
         assert fresh.send("GET", "/auth/me").status_code == 401
+    assert failures[0] == failures[1]
+    assert "Email or password is incorrect" in failures[0]["error"]
     login = fresh.send(
         "POST", "/auth/login", {"email": "A@example.test", "password": "correct password 123"}
     )
@@ -91,6 +96,29 @@ def test_cookie_flags_csrf_reuse_expiry(app, client):
     assert response.json["user"] is None
 
 
+@pytest.mark.parametrize(
+    "credentials,fields",
+    [
+        ({}, {"email": "Enter your email address.", "password": "Enter your password."}),
+        (
+            {"email": "bad-email", "password": "wrong"},
+            {"email": "Enter a valid email address, such as name@example.com."},
+        ),
+        ({"email": "a@example.test", "password": None}, {"password": "Enter your password."}),
+        (
+            {"email": "a@example.test", "password": "x" * 129},
+            {"password": "Password must be 128 characters or fewer."},
+        ),
+    ],
+)
+def test_login_input_errors_identify_fields_without_authenticating(app, credentials, fields):
+    c = Client(app, register=False)
+    response = c.send("POST", "/auth/login", credentials)
+    assert response.status_code == 422
+    assert response.json["fields"] == fields
+    assert c.send("GET", "/auth/me").status_code == 401
+
+
 @pytest.mark.parametrize("mode", ["account", "ip"])
 def test_tc26_independent_rate_limit_and_expiry(app, client, mode):
     for i in range(5):
@@ -102,7 +130,10 @@ def test_tc26_independent_rate_limit_and_expiry(app, client, mode):
         )
     c = Client(app, ip="10.9.9.9" if mode == "account" else "10.1.1.1", register=False)
     valid = {"email": "a@example.test", "password": "correct password 123"}
-    assert c.send("POST", "/auth/login", valid).status_code == 429
+    blocked = c.send("POST", "/auth/login", valid)
+    assert blocked.status_code == 429
+    assert "Too many failed sign-in attempts" in blocked.json["error"]
+    assert "15 minutes" in blocked.json["error"]
     app.config["CLOCK"] = lambda: T0 + timedelta(minutes=15) - timedelta(seconds=1)
     assert c.send("POST", "/auth/login", valid).status_code == 429
     app.config["CLOCK"] = lambda: T0 + timedelta(minutes=15)
@@ -173,7 +204,7 @@ def test_tc32_csrf_and_origin_matrix(client):
 )
 def test_tc29_tc30_malicious_login(app, credentials):
     c = Client(app, register=False)
-    assert c.send("POST", "/auth/login", credentials).status_code == 401
+    assert c.send("POST", "/auth/login", credentials).status_code == 422
     assert c.send("GET", "/auth/me").status_code == 401
 
 
