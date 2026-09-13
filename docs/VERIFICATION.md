@@ -1,5 +1,11 @@
 # Verification record
 
+## Follow-up: assignment filters after switching accounts
+
+The course filter survived sign-out and could reference a course owned by the previous account. After signing into the demo account, the dropdown appeared empty while every assignment was filtered out. Successful authentication now clears the previous course filter and request error. No database records are changed.
+
+Reproduced the empty list in Chrome and Edge before the fix. After the fix, both browsers passed the account-switch regression (all 10 demo assignments visible with All courses selected) and the existing demo history workflow: four cases passed. ESLint and production build passed. Refresh the local page to load the rebuilt client; deployed copies require the updated frontend build.
+
 ## Follow-up: clearer sign-in feedback
 
 Sign-in now identifies missing email/password, invalid email format and overlong passwords with accessible field errors (422). Incorrect credentials use the same explicit email-or-password message for unknown accounts and wrong passwords (401); rate limiting has a separate 15-minute wait reminder (429). Email normalization, password case sensitivity, session protection and lockout expiry are preserved.

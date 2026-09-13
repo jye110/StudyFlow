@@ -870,7 +870,11 @@ export default function App() {
         </button>
       </div>
     );
-  if (!user) return <Auth onAuth={setUser} />;
+  if (!user) return <Auth onAuth={(nextUser) => {
+    setCourseFilter("");
+    setError(null);
+    setUser(nextUser);
+  }} />;
   const rows = {
     onEdit: (a) => edit("assignment", a),
     onAI: (a) => setModal({ type: "ai", record: a }),
